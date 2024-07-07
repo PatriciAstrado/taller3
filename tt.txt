@@ -1,0 +1,10 @@
+pato 12
+espera 32
+aguanta 2
+nnoooo 3
+abc 100
+abcd 13
+abcde 14
+ab 1
+ba 3
+caca 50

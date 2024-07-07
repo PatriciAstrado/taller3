@@ -10,29 +10,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #ifndef lista_ordenada_palabras_h
 #define lista_ordenada_palabras_h
 #include "lista_ordenada_palabras.h"
 #endif /* lista_ordenada_palabras_h */
 
 typedef struct NodoArbolPrefijo {
-    struct  NodoArbolPrefijo *rama[26];
+    struct NodoArbolPrefijo *rama[26];
     char *palabra;
     int frecuencia;
 } NodoArbolPrefijo;
-
-void liberarMemoria(NodoArbolPrefijo *arbol);
-ListaOrdenadaPalabras *palabrasEnArbolOrdenadas(NodoArbolPrefijo *arbol);
-
-int posicion_letra (char letra){
-    
-    int letra_pos= (letra-'0')-97;          //a = 0, z= 25 rango de letras para aceder
-    if(letra_pos >25 || letra_pos < 0){
-        return -1;
-    }
-    
-    return letra_pos;
-}
 
 NodoArbolPrefijo* crearRamaVacia() {
     NodoArbolPrefijo *rama = (NodoArbolPrefijo*)malloc(sizeof(NodoArbolPrefijo));
@@ -46,130 +34,85 @@ NodoArbolPrefijo* crearRamaVacia() {
     return rama;
 }
 
-NodoArbolPrefijo* avanzaEnArbol(NodoArbolPrefijo *inicio, char caracter) {
-    int pos = posicion_letra(caracter); // dado caracter pasado a valor ASCII tomamos posición
-    if (pos == -1) {
-        return NULL; // letra no válida
+NodoArbolPrefijo* avanzaEnArbol(NodoArbolPrefijo* arbol , int indice){
+    NodoArbolPrefijo *actual = arbol;
+    if(actual->rama[indice]!= NULL){
+        actual = actual->rama[indice];
+        return actual;
+    }else{
+        actual->rama[indice] = crearRamaVacia();
+        return actual;
     }
-    if (inicio->rama[pos] == NULL) { // si la rama en la posición actual no existe se crea
-        inicio->rama[pos] = crearRamaVacia();
-    }
-    return inicio->rama[pos]; // avanzamos por la rama y devolvemos rama avanzada
+
 }
 
 
-
-NodoArbolPrefijo *creaArbolPrefijoDesdeArchivo(char *nombreArchivoPalabras) {
-    FILE *archivo = fopen(nombreArchivoPalabras, "r");
-   
-
-    NodoArbolPrefijo *arbol = crearRamaVacia();
-    char *linea;
-
-    while (fgets(linea, sizeof(linea), archivo)) {//leemos la linea comleta hasta que llegemos al final del archivo
-        char *palabra = strtok(linea, "\t"); //separamos los strings respecto /t
-        char *frecuenciaStr = strtok(NULL, "\n");//separamos desde el anterior string hasta /n
-
-        if (palabra && frecuenciaStr) { //preguntamos si existen las variables
-            int frecuencia = atoi(frecuenciaStr); // str ->int conversion
-            NodoArbolPrefijo *ramaActual = arbol;
-
-            for (int i = 0; palabra[i] != '\0'; i++) {//leemos caracter por caracter le la palabra hasta su final
-                ramaActual = avanzaEnArbol(ramaActual,palabra[i]); //avanzamos por la rama
-            }
-            //al terminar la palabra asignamos las variables corespondientes.
-            ramaActual->palabra = strdup(palabra);
-            ramaActual->frecuencia = frecuencia;
+void insertarPalabra(NodoArbolPrefijo *raiz, char *palabra, int frecuencia) {
+    NodoArbolPrefijo *actual = raiz;
+    while (*palabra) {
+        int pos = *palabra - 'a';
+        if (pos < 0 || pos >= 26) {
+            palabra++;
+            continue;
         }
+        if (actual->rama[pos] == NULL) {
+            actual->rama[pos] = crearRamaVacia();
+        }
+        actual = avanzaEnArbol(actual, pos);
+        palabra++;
+    }
+    actual->palabra = strdup(palabra);
+    actual->frecuencia = frecuencia;
+}
+
+NodoArbolPrefijo* crearArchivo(char *nombreArchivo) {
+    FILE *archivo = fopen(nombreArchivo, "r");
+    if (archivo == NULL) {
+        perror("Error al abrir el archivo");
+        return NULL;
+    }
+
+    NodoArbolPrefijo *raiz = crearRamaVacia();
+    if (raiz == NULL) {
+        printf("RAIZ NULL ERROR");
+        fclose(archivo);
+        return NULL;
+    }
+
+    char palabra[256];
+    int frecuencia;
+    
+    while (fscanf(archivo, "%s %d", palabra, &frecuencia) != EOF) {
+        insertarPalabra(raiz, palabra, frecuencia);
     }
 
     fclose(archivo);
+    return raiz;
 }
 
-
-void liberarMemoria (NodoArbolPrefijo *Arbol){
-    while (Arbol != NULL){
-        for(int i=0;i<26;i++){
-            if(Arbol->rama[i]!= NULL){
-                liberarMemoria(Arbol->rama[i]);
-            }
-        }
-        free(&Arbol->palabra);
-        free(&Arbol->frecuencia);
-        free(Arbol);
+void liberarMemoria(NodoArbolPrefijo *nodo) {
+    if (nodo == NULL) {
+        return;
     }
-
+    for (int i = 0; i < 26; i++) {
+        liberarMemoria(nodo->rama[i]);
+    }
+    if (nodo->palabra != NULL) {
+        free(nodo->palabra);
+    }
+    free(nodo);
 }
 
 
- ListaOrdenadaPalabras *palabrasEnArbolOrdenadas(NodoArbolPrefijo *arbol){
-    ListaOrdenadaPalabras *lista = crearLista();
+ListaOrdenadaPalabras* palabrasEnArbolOrdenadas(NodoArbolPrefijo *arbol){
+    ListaOrdenadaPalabras *lista = (ListaOrdenadaPalabras*)malloc(sizeof(ListaOrdenadaPalabras));
+    NodoArbolPrefijo *actual = arbol;
     for(int i=0;i<26;i++){
-        if(arbol->rama[i]!= NULL){
-            palabrasEnArbolOrdenadas(arbol->rama[i]);
+        if(actual->rama[i]!= NULL){
+            palabrasEnArbolOrdenadas(actual->rama[i]);
         }   
-        lista= ingresarDato(arbol->frecuencia,arbol->palabra,lista);
+        lista= ingresarDato(actual->frecuencia,actual->palabra,lista);
     }
-
 
     return lista;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- }
- 
-  //char ListaOrdenada[10];
-
- /*
-    for(int j = 0; j<10;j++){
-        ListaOrdenada[j] = lista->palabra;
-        lista = lista->siguiente;
-    }*/
+}

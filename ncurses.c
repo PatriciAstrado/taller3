@@ -1,4 +1,3 @@
-
 //
 //  main.c
 //  prueba ncurses 2024
@@ -7,15 +6,6 @@
 //
 
 
-#ifndef nodo_arbol_prefijo_h
-#define nodo_arbol_prefijo_h
-#include "nodo_arbol_prefijo.h"
-#endif /* nodo_arbol_prefijo_h */
-
-#ifndef lista_ordenada_palabras_h
-#define lista_ordenada_palabras_h
-#include "lista_ordenada_palabras.h"
-#endif /* lista_ordenada_palabras_h */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,19 +13,7 @@
 
 
 int main(int argc, const char * argv[]) {
-   NodoArbolPrefijo *RR = crearArchivo("tt.txt");
-    if (RR == NULL) {
-        fprintf(stderr, "Error creating the prefix tree from the file.\n");
-        return 1;
-    }
-
-    ListaOrdenadaPalabras *LL = palabrasEnArbolOrdenadas(RR);
-    if(LL == NULL) {
-        fprintf(stderr, "Error creating the prefix tree from the file.\n");
-        return 1;
-    }
-    
-    char **diesPalabras = darDiezDatos(LL);
+   
     initscr();
     cbreak();
     noecho();
@@ -70,15 +48,12 @@ int main(int argc, const char * argv[]) {
         if ((a>='a')&&(a<='z')){
             mvwprintw(ventana_izquierda, fila_izqC, col_izqC, "%c",a);
             wrefresh(ventana_izquierda);
-            wrefresh(ventana_derecha);
-            for(int i=0;i<10;i++){
-            mvwprintw(ventana_derecha, fila_der, col_der, "La letra ingresada es %s",diesPalabras[i]);
+            mvwprintw(ventana_derecha, fila_der, col_der, "La letra ingresada es %c",a);
             wrefresh(ventana_derecha);
             fila_izq+=1;
             fila_der+=1;
-            }
             col_izqC++;
-        }else if(a==' ' || a=='\n'){
+        }else if(a==' '){
             mvwprintw(ventana_izquierda, fila_izqC, col_izqC, " ",a);
             col_izqC++;
             wrefresh(ventana_izquierda);
@@ -121,8 +96,7 @@ int main(int argc, const char * argv[]) {
     }
 
     endwin();           
-    //
-    liberarMemoria(RR);
+    liberarMenoria(RR);
     return 0;
 
 }

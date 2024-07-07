@@ -10,7 +10,23 @@ typedef struct ListaOrdenadaPalabras{
     struct ListaOrdenadaPalabras *siguiente;
 
 }ListaOrdenadaPalabras;
+//ListaOrdenadaPalabras *lista = (ListaOrdenadaPalabras*)malloc(sizeof(ListaOrdenadaPalabras));
 
+char **darDiezDatos(ListaOrdenadaPalabras *lista) {
+    ListaOrdenadaPalabras *actual = lista;
+    char **datos = (char **)malloc(10 * sizeof(char *));
+
+    for (int i = 0; i < 10; i++) {
+        if (actual == NULL) {
+            printf("!!!NULL");
+            //datos[i] = NULL; // If there are less than 10 nodes, fill remaining with NULL
+        } else {
+            datos[i] = actual->palabraListada;
+            actual = actual->siguiente;
+        }
+    }
+    return datos;
+}
 
 ListaOrdenadaPalabras *ingresarDato(int Entradafrecuencia, char *Entradapalabra, ListaOrdenadaPalabras *lista) {
     ListaOrdenadaPalabras *nuevo = (ListaOrdenadaPalabras*)malloc(sizeof(ListaOrdenadaPalabras));
@@ -32,24 +48,4 @@ ListaOrdenadaPalabras *ingresarDato(int Entradafrecuencia, char *Entradapalabra,
     actual->siguiente = nuevo;
     
     return lista;
-}
-
-ListaOrdenadaPalabras *crearLista() {
-    ListaOrdenadaPalabras *lista = (ListaOrdenadaPalabras*)malloc(sizeof(ListaOrdenadaPalabras));
-    if (lista != NULL) {
-        lista->frecuenciaListada = 0;  // Inicializar frecuencia
-        lista->palabraListada = NULL;  // Inicializar puntero a palabra como NULL
-        lista->siguiente = NULL;       // Inicializar siguiente como NULL
-    }
-    return lista;
-}
-
-char *darDiezDatos(ListaOrdenadaPalabras lista){
-    char *stringOrdenados[10];
-    ListaOrdenadaPalabras *actual = (ListaOrdenadaPalabras*)malloc(sizeof(ListaOrdenadaPalabras));
-    for (int i =0;i<10;i++){
-        stringOrdenados[i] = actual->palabraListada;
-        actual = actual->siguiente;
-    }
-    return stringOrdenados;
 }

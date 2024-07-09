@@ -34,21 +34,16 @@ NodoArbolPrefijo* crearRamaVacia() {
     return rama;
 }
 
-NodoArbolPrefijo* avanzaEnArbol(NodoArbolPrefijo* arbol , int indice){
-    NodoArbolPrefijo *actual = arbol;
-    if(actual->rama[indice]!= NULL){
-        actual = actual->rama[indice];
-        return actual;
-    }else{
-        actual->rama[indice] = crearRamaVacia();
-        return actual;
+NodoArbolPrefijo* avanzaEnArbol(NodoArbolPrefijo* arbol, int indice) {
+    if (arbol->rama[indice] == NULL) {
+        arbol->rama[indice] = crearRamaVacia();
     }
-
+    return arbol->rama[indice];
 }
-
 
 void insertarPalabra(NodoArbolPrefijo *raiz, char *palabra, int frecuencia) {
     NodoArbolPrefijo *actual = raiz;
+    char *originalPalabra = palabra; // Store the original pointer
     while (*palabra) {
         int pos = *palabra - 'a';
         if (pos < 0 || pos >= 26) {
@@ -61,7 +56,7 @@ void insertarPalabra(NodoArbolPrefijo *raiz, char *palabra, int frecuencia) {
         actual = avanzaEnArbol(actual, pos);
         palabra++;
     }
-    actual->palabra = strdup(palabra);
+    actual->palabra = strdup(originalPalabra); // Use the original pointer
     actual->frecuencia = frecuencia;
 }
 
@@ -104,15 +99,15 @@ void liberarMemoria(NodoArbolPrefijo *nodo) {
 }
 
 
-ListaOrdenadaPalabras* palabrasEnArbolOrdenadas(NodoArbolPrefijo *arbol){
-    ListaOrdenadaPalabras *lista = (ListaOrdenadaPalabras*)malloc(sizeof(ListaOrdenadaPalabras));
-    NodoArbolPrefijo *actual = arbol;
-    for(int i=0;i<26;i++){
-        if(actual->rama[i]!= NULL){
-            palabrasEnArbolOrdenadas(actual->rama[i]);
-        }   
-        lista= ingresarDato(actual->frecuencia,actual->palabra,lista);
+ListaOrdenadaPalabras* palabrasEnArbolOrdenadas(NodoArbolPrefijo *arbol, ListaOrdenadaPalabras *lista) {
+    if (arbol == NULL) {
+        return lista;
     }
-
+    for (int i = 0; i < 26; i++) {
+        lista = palabrasEnArbolOrdenadas(arbol->rama[i], lista);
+    }
+    if (arbol->palabra != NULL) {
+        lista = ingresarDato(arbol->frecuencia, arbol->palabra, lista);
+    }
     return lista;
 }

@@ -13,13 +13,12 @@ typedef struct ListaOrdenadaPalabras{
 //ListaOrdenadaPalabras *lista = (ListaOrdenadaPalabras*)malloc(sizeof(ListaOrdenadaPalabras));
 
 char **darDiezDatos(ListaOrdenadaPalabras *lista) {
-    ListaOrdenadaPalabras *actual = lista;
     char **datos = (char **)malloc(10 * sizeof(char *));
+    ListaOrdenadaPalabras *actual = lista;
 
     for (int i = 0; i < 10; i++) {
         if (actual == NULL) {
-            printf("!!!NULL");
-            //datos[i] = NULL; // If there are less than 10 nodes, fill remaining with NULL
+            datos[i] = NULL;
         } else {
             datos[i] = actual->palabraListada;
             actual = actual->siguiente;
@@ -28,10 +27,10 @@ char **darDiezDatos(ListaOrdenadaPalabras *lista) {
     return datos;
 }
 
-ListaOrdenadaPalabras *ingresarDato(int Entradafrecuencia, char *Entradapalabra, ListaOrdenadaPalabras *lista) {
+ListaOrdenadaPalabras* ingresarDato(int Entradafrecuencia, char *Entradapalabra, ListaOrdenadaPalabras *lista) {
     ListaOrdenadaPalabras *nuevo = (ListaOrdenadaPalabras*)malloc(sizeof(ListaOrdenadaPalabras));
     nuevo->frecuenciaListada = Entradafrecuencia;
-    nuevo->palabraListada = Entradapalabra;
+    nuevo->palabraListada = strdup(Entradapalabra); // Duplicate the word to store it safely
     nuevo->siguiente = NULL;
 
     if (lista == NULL || lista->frecuenciaListada <= Entradafrecuencia) {
@@ -46,6 +45,5 @@ ListaOrdenadaPalabras *ingresarDato(int Entradafrecuencia, char *Entradapalabra,
     
     nuevo->siguiente = actual->siguiente;
     actual->siguiente = nuevo;
-    
     return lista;
 }

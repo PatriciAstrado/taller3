@@ -10,7 +10,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ncurses.h>
-
+int limpiaVentana(int filaIzq, int filaDer){
+    while(fila)
+}
 
 int main(int argc, const char * argv[]) {
    
@@ -59,8 +61,10 @@ int main(int argc, const char * argv[]) {
             wrefresh(ventana_izquierda);
             mvwprintw(ventana_derecha, fila_der, col_der, "La letra ingresada es espacio",a);
             wrefresh(ventana_derecha);
-            fila_izq+=1;
-            fila_der+=1;
+            fila_izq++;
+            fila_der++;
+            
+            
         }else{
             switch(a){
                 case KEY_LEFT:
@@ -96,7 +100,7 @@ int main(int argc, const char * argv[]) {
     }
 
     endwin();           
-    liberarMenoria(RR);
+    
     return 0;
 
 }

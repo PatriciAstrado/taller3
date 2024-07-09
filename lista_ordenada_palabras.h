@@ -10,8 +10,16 @@ typedef struct ListaOrdenadaPalabras{
     struct ListaOrdenadaPalabras *siguiente;
 
 }ListaOrdenadaPalabras;
-//ListaOrdenadaPalabras *lista = (ListaOrdenadaPalabras*)malloc(sizeof(ListaOrdenadaPalabras));
 
+void liberarLista(ListaOrdenadaPalabras *lista){
+    
+    while (lista != NULL) {
+        ListaOrdenadaPalabras *temp = lista;
+        lista = lista->siguiente;
+        free(temp->palabraListada);
+        free(temp);
+    }
+}
 char **darDiezDatos(ListaOrdenadaPalabras *lista) {
     char **datos = (char **)malloc(10 * sizeof(char *));
     ListaOrdenadaPalabras *actual = lista;
@@ -30,7 +38,7 @@ char **darDiezDatos(ListaOrdenadaPalabras *lista) {
 ListaOrdenadaPalabras* ingresarDato(int Entradafrecuencia, char *Entradapalabra, ListaOrdenadaPalabras *lista) {
     ListaOrdenadaPalabras *nuevo = (ListaOrdenadaPalabras*)malloc(sizeof(ListaOrdenadaPalabras));
     nuevo->frecuenciaListada = Entradafrecuencia;
-    nuevo->palabraListada = strdup(Entradapalabra); // Duplicate the word to store it safely
+    nuevo->palabraListada = strdup(Entradapalabra); 
     nuevo->siguiente = NULL;
 
     if (lista == NULL || lista->frecuenciaListada <= Entradafrecuencia) {

@@ -43,7 +43,7 @@ NodoArbolPrefijo* avanzaEnArbol(NodoArbolPrefijo* arbol, int indice) {
 
 void insertarPalabra(NodoArbolPrefijo *raiz, char *palabra, int frecuencia) {
     NodoArbolPrefijo *actual = raiz;
-    char *originalPalabra = palabra; // Store the original pointer
+    char *originalPalabra = palabra;
     while (*palabra) {
         int pos = *palabra - 'a';
         if (pos < 0 || pos >= 26) {
@@ -56,7 +56,7 @@ void insertarPalabra(NodoArbolPrefijo *raiz, char *palabra, int frecuencia) {
         actual = avanzaEnArbol(actual, pos);
         palabra++;
     }
-    actual->palabra = strdup(originalPalabra); // Use the original pointer
+    actual->palabra = strdup(originalPalabra); 
     actual->frecuencia = frecuencia;
 }
 
